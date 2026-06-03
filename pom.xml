@@ -64,11 +64,11 @@
             <version>42.6.0</version>
         </dependency>
 
-        <!-- HikariCP (пул соединений) -->
+        <!-- Tomcat JDBC Pool -->
         <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <version>5.0.1</version>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jdbc</artifactId>
+            <version>10.1.28</version>
         </dependency>
 
         <!-- JUnit 5 -->
