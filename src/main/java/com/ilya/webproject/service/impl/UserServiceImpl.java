@@ -5,6 +5,7 @@ import com.ilya.webproject.dao.impl.UserDaoImpl;
 import com.ilya.webproject.model.User;
 import com.ilya.webproject.service.UserService;
 import com.ilya.webproject.util.PasswordUtil;
+import com.ilya.webproject.exception.ApplicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,12 +30,12 @@ public class UserServiceImpl implements UserService {
 
         if (isUsernameTaken(user.getUsername())) {
             logger.warn("Username {} is already taken", user.getUsername());
-            return false;
+            throw new ApplicationException("Username is already taken");
         }
 
         if (isEmailTaken(user.getEmail())) {
             logger.warn("Email {} is already taken", user.getEmail());
-            return false;
+            throw new ApplicationException("Email is already taken");
         }
 
         String hashedPassword = PasswordUtil.hashPassword(user.getPassword());
@@ -49,19 +50,18 @@ public class UserServiceImpl implements UserService {
 
         Optional<User> userOpt = userDao.findByUsername(username);
 
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-            if (PasswordUtil.checkPassword(password, user.getPassword())) {
-                logger.info("Login successful for user: {}", username);
-                return userOpt;
-            } else {
-                logger.warn("Invalid password for user: {}", username);
-            }
-        } else {
+        if (userOpt.isEmpty()) {
             logger.warn("User not found: {}", username);
+            throw new ApplicationException("Invalid username or password");
         }
 
-        return Optional.empty();
+        User user = userOpt.get();
+        if (!PasswordUtil.checkPassword(password, user.getPassword())) {
+            logger.warn("Invalid password for user: {}", username);
+            throw new ApplicationException("Invalid username or password");
+        }
+
+        return userOpt;
     }
 
     @Override

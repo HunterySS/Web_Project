@@ -5,6 +5,7 @@ import com.ilya.webproject.service.UserService;
 import com.ilya.webproject.service.impl.UserServiceImpl;
 import com.ilya.webproject.util.PasswordUtil;
 import jakarta.servlet.ServletException;
+import com.ilya.webproject.exception.ApplicationException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,14 +50,8 @@ public class EditProfileServlet extends HttpServlet {
             currentUser.setEmail(email);
         }
 
-        if (newPassword != null && !newPassword.trim().isEmpty()) {
-            if (newPassword.equals(confirmPassword)) {
-                currentUser.setPassword(PasswordUtil.hashPassword(newPassword));
-            } else {
-                req.setAttribute("error", "Passwords do not match");
-                req.getRequestDispatcher("/WEB-INF/views/editProfile.jsp").forward(req, resp);
-                return;
-            }
+        if (!newPassword.equals(confirmPassword)) {
+            throw new ApplicationException("Passwords do not match");
         }
 
         userService.updateUser(currentUser);

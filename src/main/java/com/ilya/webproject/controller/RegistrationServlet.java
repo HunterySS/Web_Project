@@ -3,6 +3,7 @@ package com.ilya.webproject.controller;
 import com.ilya.webproject.model.User;
 import com.ilya.webproject.service.UserService;
 import com.ilya.webproject.service.impl.UserServiceImpl;
+import com.ilya.webproject.exception.ApplicationException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -81,14 +82,9 @@ public class RegistrationServlet extends HttpServlet {
         User newUser = new User(username, email, password);
         boolean registered = userService.register(newUser);
 
-        if (registered) {
-            logger.info("User {} successfully registered", username);
-            req.getSession().setAttribute("registerSuccess", "Registration successful! Please sign in");
-            resp.sendRedirect(req.getContextPath() + "/login");
-        } else {
-            logger.error("Failed to register user {}", username);
-            req.setAttribute("error", "Registration failed. Please try again.");
-            req.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(req, resp);
+        if (userService.isUsernameTaken(username)) {
+            logger.warn("Username {} is already taken", username);
+            throw new ApplicationException("Username is already taken");
         }
     }
 }

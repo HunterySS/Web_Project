@@ -3,6 +3,7 @@ package com.ilya.webproject.controller;
 import com.ilya.webproject.model.User;
 import com.ilya.webproject.service.UserService;
 import com.ilya.webproject.service.impl.UserServiceImpl;
+import com.ilya.webproject.exception.ApplicationException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -55,15 +56,9 @@ public class LoginServlet extends HttpServlet {
 
         Optional<User> userOpt = userService.login(username, password);
 
-        if (userOpt.isPresent()) {
-            HttpSession session = req.getSession();
-            session.setAttribute("user", userOpt.get());
-            logger.info("User {} successfully logged in", username);
-            resp.sendRedirect(req.getContextPath() + "/home");
-        } else {
+        if (userOpt.isEmpty()) {
             logger.warn("Failed login attempt for user {}", username);
-            req.setAttribute("error", "Invalid username or password");
-            req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
+            throw new ApplicationException("Invalid username or password");
         }
     }
 }

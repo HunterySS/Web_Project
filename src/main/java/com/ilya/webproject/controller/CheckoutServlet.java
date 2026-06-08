@@ -7,6 +7,7 @@ import com.ilya.webproject.model.CartItem;
 import com.ilya.webproject.model.Order;
 import com.ilya.webproject.model.OrderItem;
 import com.ilya.webproject.model.User;
+import com.ilya.webproject.exception.ApplicationException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -91,15 +92,9 @@ public class CheckoutServlet extends HttpServlet {
 
         Order savedOrder = orderDao.save(order, orderItems);
 
-        if (savedOrder != null) {
-            session.removeAttribute("cart");
-            session.setAttribute("orderSuccess", "Order #" + savedOrder.getId() + " created successfully!");
-            logger.info("Order completed successfully for user: {}", user.getUsername());
-            resp.sendRedirect(req.getContextPath() + "/orders");
-        } else {
+        if (savedOrder == null) {
             logger.error("Order failed for user: {}", user.getUsername());
-            session.setAttribute("orderError", "Order failed. Insufficient stock.");
-            resp.sendRedirect(req.getContextPath() + "/cart");
+            throw new ApplicationException("Order failed. Insufficient stock.");
         }
     }
 }
