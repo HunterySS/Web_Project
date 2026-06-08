@@ -83,8 +83,8 @@ public class RegistrationServlet extends HttpServlet {
 
         if (registered) {
             logger.info("User {} successfully registered", username);
-            req.setAttribute("success", "Registration successful! Please sign in");
-            req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
+            req.getSession().setAttribute("registerSuccess", "Registration successful! Please sign in");
+            resp.sendRedirect(req.getContextPath() + "/login");
         } else {
             logger.error("Failed to register user {}", username);
             req.setAttribute("error", "Registration failed. Please try again.");

@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +17,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public boolean save(User user) {
-        String sql = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnectionPool.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -24,6 +25,7 @@ public class UserDaoImpl implements UserDao {
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getEmail());
             ps.setString(3, user.getPassword());
+            ps.setString(4, user.getRole() != null ? user.getRole() : "USER");
 
             int affectedRows = ps.executeUpdate();
 
@@ -137,7 +139,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public boolean update(User user) {
-        String sql = "UPDATE users SET username = ?, email = ?, password = ? WHERE id = ?";
+        String sql = "UPDATE users SET username = ?, email = ?, password = ?, role = ? WHERE id = ?";
 
         try (Connection conn = DatabaseConnectionPool.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -145,7 +147,8 @@ public class UserDaoImpl implements UserDao {
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getEmail());
             ps.setString(3, user.getPassword());
-            ps.setLong(4, user.getId());
+            ps.setString(4, user.getRole() != null ? user.getRole() : "USER");
+            ps.setLong(5, user.getId());
 
             int affectedRows = ps.executeUpdate();
 
@@ -190,6 +193,7 @@ public class UserDaoImpl implements UserDao {
         user.setUsername(rs.getString("username"));
         user.setEmail(rs.getString("email"));
         user.setPassword(rs.getString("password"));
+        user.setRole(rs.getString("role"));
 
         Timestamp timestamp = rs.getTimestamp("created_at");
         if (timestamp != null) {

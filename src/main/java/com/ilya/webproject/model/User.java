@@ -8,6 +8,7 @@ public class User {
     private String email;
     private String password;
     private LocalDateTime createdAt;
+    private String role;
 
     public User() {}
 
@@ -31,6 +32,18 @@ public class User {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public boolean isAdmin() {
+        return "ADMIN".equals(role);
+    }
 
     @Override
     public String toString() {

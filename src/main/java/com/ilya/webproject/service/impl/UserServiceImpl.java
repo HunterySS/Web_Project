@@ -4,6 +4,7 @@ import com.ilya.webproject.dao.UserDao;
 import com.ilya.webproject.dao.impl.UserDaoImpl;
 import com.ilya.webproject.model.User;
 import com.ilya.webproject.service.UserService;
+import com.ilya.webproject.util.PasswordUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,9 @@ public class UserServiceImpl implements UserService {
             return false;
         }
 
+        String hashedPassword = PasswordUtil.hashPassword(user.getPassword());
+        user.setPassword(hashedPassword);
+
         return userDao.save(user);
     }
 
@@ -47,7 +51,7 @@ public class UserServiceImpl implements UserService {
 
         if (userOpt.isPresent()) {
             User user = userOpt.get();
-            if (user.getPassword().equals(password)) {
+            if (PasswordUtil.checkPassword(password, user.getPassword())) {
                 logger.info("Login successful for user: {}", username);
                 return userOpt;
             } else {

@@ -10,11 +10,9 @@ import java.sql.SQLException;
 
 public class DatabaseConnectionPool {
     private static final Logger logger = LoggerFactory.getLogger(DatabaseConnectionPool.class);
-    private static volatile DataSource dataSource;
+    private static final DataSource dataSource;
 
-    private DatabaseConnectionPool() {}
-
-    private static void createPool() {
+    static {
         PoolProperties properties = new PoolProperties();
 
         properties.setUrl("jdbc:postgresql://localhost:5432/web_project");
@@ -41,14 +39,9 @@ public class DatabaseConnectionPool {
         logger.info("Tomcat JDBC Pool initialized successfully");
     }
 
+    private DatabaseConnectionPool() {}
+
     public static Connection getConnection() throws SQLException {
-        if (dataSource == null) {
-            synchronized (DatabaseConnectionPool.class) {
-                if (dataSource == null) {
-                    createPool();
-                }
-            }
-        }
         return dataSource.getConnection();
     }
 

@@ -1,0 +1,4 @@
+2026-06-02 18:27:17.766 [main] INFO  util.com.ilya.webproject.DatabaseConnectionPool - Tomcat JDBC Pool initialized successfully
+2026-06-02 18:27:18.337 [main] DEBUG impl.dao.com.ilya.webproject.UserDaoImpl - User found: admin
+2026-06-02 18:27:18.348 [main] INFO  impl.dao.com.ilya.webproject.UserDaoImpl - User saved successfully: testuser
+2026-06-02 18:27:18.350 [main] INFO  util.com.ilya.webproject.DatabaseConnectionPool - Tomcat JDBC Pool closed
